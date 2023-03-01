@@ -45,3 +45,8 @@ async def root():
     """
 
     return {"message": "This is from Zlab"}
+
+
+@app.get('/api/clone-repo/{url:path}')
+async def cloneapi(url:str):
+    return {'git repo':url}
