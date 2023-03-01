@@ -33,6 +33,7 @@ uvicorn = "==0.20.0"
 uvloop = "==0.17.0"
 watchfiles = "==0.18.1"
 websockets = "==10.4"
+gitpython = "*"
 
 [dev-packages]
 

@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
+from git import Repo
+import os
 
+rw_dir = os.getcwd()
 app = FastAPI()
 
 
@@ -49,4 +52,7 @@ async def root():
 
 @app.get('/api/clone-repo/{url:path}')
 async def cloneapi(url:str):
+    Repo.clone_from(url, 'repo')
+
     return {'git repo':url}
+
