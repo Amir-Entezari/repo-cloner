@@ -56,10 +56,15 @@ async def root():
 async def cloneapi(url:str):
     proj_name = re.search("[^\/]+(?=\.git$)", url)[0]
     dest_dir = f"repo/{proj_name}"
+
+    if not os.path.exists(dest_dir):
+        try:
+            repo = Repo.clone_from(url, dest_dir)
+            subprocess.run(["docker", "build", "-t", proj_name, "."], cwd=os.path.join(rw_dir,dest_dir))
+        except:
+            raise HTTPException(status_code=400, detail="Error during cloning repository or starting container.")
     try:
-        repo = Repo.clone_from(url, dest_dir)
-        subprocess.run(["docker", "build", "-t", proj_name, "."], cwd=os.path.join(rw_dir,dest_dir))
-        subprocess.run(["docker", "run", "-d", "-p", "80:5000", proj_name], cwd=os.path.join(rw_dir,dest_dir))
-        return {"message": "Successfully cloned repository and started container."}
+        subprocess.run(["docker", "run", "-d", "-p", "5000:5000", proj_name], cwd=os.path.join(rw_dir,dest_dir))
+        return {"message": "Successfully started container."}
     except:
-        raise HTTPException(status_code=400, detail="Error cloning repository or starting container.")
+        raise HTTPException(status_code=400, detail="Error during starting container.")
