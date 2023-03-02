@@ -34,6 +34,7 @@ uvloop = "==0.17.0"
 watchfiles = "==0.18.1"
 websockets = "==10.4"
 gitpython = "*"
+docker = "*"
 
 [dev-packages]
 

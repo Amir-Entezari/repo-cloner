@@ -1,7 +1,8 @@
-from fastapi import FastAPI
-from fastapi.openapi.utils import get_openapi
-from git import Repo
 import os
+import subprocess
+from git import Repo
+from fastapi import FastAPI ,HTTPException
+from fastapi.openapi.utils import get_openapi
 
 rw_dir = os.getcwd()
 app = FastAPI()
@@ -52,7 +53,10 @@ async def root():
 
 @app.get('/api/clone-repo/{url:path}')
 async def cloneapi(url:str):
-    Repo.clone_from(url, 'repo')
-
-    return {'git repo':url}
-
+    try:
+        repo = Repo.clone_from(url, "repo")
+        subprocess.run(["docker", "build", "-t", "my-image", "."], cwd=os.path.join(rw_dir,"repo"))
+        subprocess.run(["docker", "run", "-d", "-p", "80:5000", "my-image"], cwd=os.path.join(rw_dir,"repo"))
+        return {"message": "Successfully cloned repository and started container."}
+    except:
+        raise HTTPException(status_code=400, detail="Error cloning repository or starting container.")
